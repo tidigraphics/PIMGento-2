@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [100.2.4] - 2017-02-21
+
+  * fix: Error during URL rewrite updates with multiple locales
+
 ## [100.2.3] - 2017-02-21
 
   * fix: Integrity constraint violation when importing in a shop with multiple store views
