@@ -631,7 +631,7 @@ class Import extends Factory
                     ->where('_children IS NOT NULL')
             );
 
-            $valuesSuperAttribute = [];
+            $stepSize = 500;
             $valuesLabels = [];
             $valuesRelations = [];
             $valuesSuperLink = [];
@@ -706,36 +706,35 @@ class Import extends Factory
                                 'parent_id' => $row['_entity_id'],
                                 'child_id' => $childId,
                             );
-//                            $connection->insertOnDuplicate(
-//                                $connection->getTableName('catalog_product_relation'), $values, array()
-//                            );
 
                             /* catalog_product_super_link */
                             $valuesSuperLink[] = array(
                                 'product_id' => $childId,
                                 'parent_id' => $row['_entity_id'],
                             );
-//                            $connection->insertOnDuplicate(
-//                                $connection->getTableName('catalog_product_super_link'), $values, array()
-//                            );
                         }
                     }
 
 
-                    if (count($valuesSuperLink)  > 500) {
+                    if (count($valuesSuperLink)  > $stepSize) {
                         $connection->insertOnDuplicate(
-                            $connection->getTableName('catalog_product_super_attribute_label'), $valuesLabels, array()
+                            $connection->getTableName('catalog_product_super_attribute_label'),
+                            $valuesLabels,
+                            array()
                         );
 
                         $connection->insertOnDuplicate(
-                            $connection->getTableName('catalog_product_relation'), $valuesRelations, array()
+                            $connection->getTableName('catalog_product_relation'),
+                            $valuesRelations,
+                            array()
                         );
                         $connection->insertOnDuplicate(
-                            $connection->getTableName('catalog_product_super_link'), $valuesSuperLink, array()
+                            $connection->getTableName('catalog_product_super_link'),
+                            $valuesSuperLink,
+                            array()
                         );
 
 
-                        $valuesSuperAttribute = [];
                         $valuesLabels = [];
                         $valuesRelations = [];
                         $valuesSuperLink = [];
@@ -744,16 +743,21 @@ class Import extends Factory
             }
 
             if (count($valuesSuperLink)  > 0) {
-
                 $connection->insertOnDuplicate(
-                    $connection->getTableName('catalog_product_super_attribute_label'), $valuesLabels, array()
+                    $connection->getTableName('catalog_product_super_attribute_label'),
+                    $valuesLabels,
+                    array()
                 );
 
                 $connection->insertOnDuplicate(
-                    $connection->getTableName('catalog_product_relation'), $valuesRelations, array()
+                    $connection->getTableName('catalog_product_relation'),
+                    $valuesRelations,
+                    array()
                 );
                 $connection->insertOnDuplicate(
-                    $connection->getTableName('catalog_product_super_link'), $valuesSuperLink, array()
+                    $connection->getTableName('catalog_product_super_link'),
+                    $valuesSuperLink,
+                    array()
                 );
             }
         }
