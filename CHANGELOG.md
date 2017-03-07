@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [100.2.5] - 2017-03-17
+
+  * fix: fix image import with staging mode
+
 ## [100.2.4] - 2017-02-21
 
   * fix: Error during URL rewrite updates with multiple locales

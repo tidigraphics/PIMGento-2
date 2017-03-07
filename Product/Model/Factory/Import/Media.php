@@ -435,6 +435,8 @@ class Media extends Factory
         // working on "media gallery value"
         $tableGallery = $connection->getTableName('catalog_product_entity_media_gallery_value');
 
+        $identifier = $this->_entities->getColumnIdentifier($tableGallery);
+
         // get the record id from gallery value (for new medias)
         $maxId = $this->mediaGetMaxId($tableGallery, 'record_id');
         for ($k=1; $k<=$maxId; $k+= $step) {
@@ -445,14 +447,12 @@ class Media extends Factory
                 UPDATE $tableMedia, $tableGallery
                 SET $tableMedia.record_id = $tableGallery.record_id
                 WHERE $tableGallery.record_id >= $min AND $tableGallery.record_id < $max
-                AND $tableGallery.entity_id = $tableMedia.entity_id
+                AND $tableGallery." . $identifier . " = $tableMedia.entity_id
                 AND $tableGallery.value_id = $tableMedia.value_id
                 AND $tableGallery.store_id = $tableMedia.store_id
             ";
             $connection->query($query);
         }
-
-        $identifier = $this->_entities->getColumnIdentifier($tableGallery);
 
         // add the new medias to the gallery value
         $select = $connection->select()
