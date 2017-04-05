@@ -423,6 +423,26 @@ class Import extends Factory
             $columnPrefix = reset($columnPrefix);
 
             if ($connection->tableColumnExists($tmpTable, $column)) {
+                //get number of chars to remove from code in order to use the substring.
+                $prefixL = strlen($columnPrefix . '_') + 1;
+
+                // Sub select to increase performance versus FIND_IN_SET
+                $subSelect = $connection->select()
+                    ->from(
+                        array('c' => $connection->getTableName('pimgento_entities')),
+                        array('code' => 'SUBSTRING(`c`.`code`,' . $prefixL . ')', 'entity_id' => 'c.entity_id')
+                    )
+                    ->where("c.code like '".$column."_%' ")
+                    ->where("c.import = ?", 'option');
+
+                // if no option no need to continue process
+                if (!$connection->query($subSelect)->rowCount()) {
+                    continue;
+                }
+                //in case of multiselect
+                $conditionJoin = "IF ( locate(',', ".$column.") > 0 , ". "`p`.`".$column."` like ".
+                    new Expr("CONCAT('%', c1.code, '%')") .", p.".$column." = c1.code )";
+
                 $select = $connection->select()
                     ->from(
                         array('p' => $tmpTable),
@@ -431,18 +451,11 @@ class Import extends Factory
                             'entity_id' => 'p._entity_id'
                         )
                     )
-                    ->distinct()
                     ->joinInner(
+                        array('c1' => new Expr('('.(string) $subSelect.')')),
+                        new Expr($conditionJoin),
                         array(
-                            'c' => $connection->getTableName('pimgento_entities')
-                        ),
-                        'FIND_IN_SET(
-                            REPLACE(`c`.`code`, "' . $columnPrefix . '_", ""),
-                            `p`.`' . $column . '`
-                        )
-                        AND `c`.`import` = "option"',
-                        array(
-                            $column => new Expr('GROUP_CONCAT(`c`.`entity_id` SEPARATOR ",")')
+                            $column => new Expr('GROUP_CONCAT(`c1`.`entity_id` SEPARATOR ",")')
                         )
                     )
                     ->group('p.sku');
