@@ -2,6 +2,7 @@
 
 namespace Pimgento\Import\Console\Command;
 
+use \Magento\Framework\App\State;
 use \Symfony\Component\Console\Command\Command;
 use \Symfony\Component\Console\Input\InputInterface;
 use \Symfony\Component\Console\Output\OutputInterface;
@@ -22,15 +23,22 @@ class PimgentoImportCommand extends Command
     protected $_import;
 
     /**
+     * @var \Magento\Framework\App\State
+     */
+    protected $_appState;
+
+    /**
      * PimgentoImportCommand constructor.
      *
      * @param \Pimgento\Import\Model\Import $import
+     * @param \Magento\Framework\App\State $appState
      * @param null $name
      */
-    public function __construct(ImportModel $import, $name = null)
+    public function __construct(ImportModel $import, State $appState, $name = null)
     {
         parent::__construct($name);
         $this->_import = $import;
+        $this->_appState = $appState;
     }
 
     /**
@@ -49,6 +57,7 @@ class PimgentoImportCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->_appState->setAreaCode('admin');
         $code = $input->getOption(self::IMPORT_CODE);
         $file = $input->getOption(self::IMPORT_FILE);
 
