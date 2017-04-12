@@ -2,6 +2,7 @@
 
 namespace Pimgento\Import\Console\Command;
 
+use \Magento\Framework\App\Area;
 use \Magento\Framework\App\State;
 use \Symfony\Component\Console\Command\Command;
 use \Symfony\Component\Console\Input\InputInterface;
@@ -57,7 +58,7 @@ class PimgentoImportCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->_appState->setAreaCode('admin');
+        $this->_appState->setAreaCode(Area::AREA_ADMINHTML);
         $code = $input->getOption(self::IMPORT_CODE);
         $file = $input->getOption(self::IMPORT_FILE);
 
