@@ -860,11 +860,38 @@ class Import extends Factory
             }
 
             if ($connection->tableColumnExists($tmpTable, $column)) {
+
+                $duplicates = $connection->fetchCol(
+                    $connection->select()
+                        ->from($tmpTable, [$column])
+                        ->group($column)
+                        ->having('COUNT(*) > 1')
+                );
+
+                foreach ($duplicates as $urlKey) {
+                    if ($urlKey) {
+                        $connection->update(
+                            $tmpTable,
+                            [$column => new Expr('CONCAT(`' . $column . '`, "-", `sku`)')],
+                            ['`' . $column . '` = ?' => $urlKey]
+                        );
+                    }
+                }
+                
                 foreach ($affected as $store) {
 
                     if ($store['store_id'] == 0) {
                         continue;
                     }
+
+                    $this->_entities->setValues(
+                        $this->getCode(),
+                        $connection->getTableName('catalog_product_entity'),
+                        ['url_key' => $column],
+                        4,
+                        $store['store_id'],
+                        1
+                    );
 
                     $this->_urlRewriteHelper->rewriteUrls($this->getCode(), $store['store_id'], $column);
                 }
