@@ -573,8 +573,6 @@ class Import extends Factory
             $columnPrefix = explode('-', $column);
             $columnPrefix = reset($columnPrefix);
 
-            $values[0][$columnPrefix] = $column;
-
             foreach ($stores as $suffix => $affected) {
                 if (preg_match('/' . $suffix . '$/', $column)) {
                     foreach ($affected as $store) {
@@ -586,6 +584,9 @@ class Import extends Factory
                 }
             }
 
+            if (!isset($values[0][$columnPrefix])) {
+                $values[0][$columnPrefix] = $column;
+            }
         }
 
         foreach($values as $storeId => $data) {
