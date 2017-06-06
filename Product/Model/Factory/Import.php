@@ -41,7 +41,7 @@ class Import extends Factory
     /**
      * @var \Pimgento\Product\Helper\Config
      */
-    protected $_productHelper; 
+    protected $_productHelper;
 
     /**
      * @var \Pimgento\Product\Helper\Media
@@ -423,6 +423,26 @@ class Import extends Factory
             $columnPrefix = reset($columnPrefix);
 
             if ($connection->tableColumnExists($tmpTable, $column)) {
+                //get number of chars to remove from code in order to use the substring.
+                $prefixL = strlen($columnPrefix . '_') + 1;
+
+                // Sub select to increase performance versus FIND_IN_SET
+                $subSelect = $connection->select()
+                    ->from(
+                        array('c' => $connection->getTableName('pimgento_entities')),
+                        array('code' => 'SUBSTRING(`c`.`code`,' . $prefixL . ')', 'entity_id' => 'c.entity_id')
+                    )
+                    ->where("c.code like '".$column."_%' ")
+                    ->where("c.import = ?", 'option');
+
+                // if no option no need to continue process
+                if (!$connection->query($subSelect)->rowCount()) {
+                    continue;
+                }
+                //in case of multiselect
+                $conditionJoin = "IF ( locate(',', ".$column.") > 0 , ". "`p`.`".$column."` like ".
+                    new Expr("CONCAT('%', c1.code, '%')") .", p.".$column." = c1.code )";
+
                 $select = $connection->select()
                     ->from(
                         array('p' => $tmpTable),
@@ -431,18 +451,11 @@ class Import extends Factory
                             'entity_id' => 'p._entity_id'
                         )
                     )
-                    ->distinct()
                     ->joinInner(
+                        array('c1' => new Expr('('.(string) $subSelect.')')),
+                        new Expr($conditionJoin),
                         array(
-                            'c' => $connection->getTableName('pimgento_entities')
-                        ),
-                        'FIND_IN_SET(
-                            REPLACE(`c`.`code`, "' . $columnPrefix . '_", ""),
-                            `p`.`' . $column . '`
-                        )
-                        AND `c`.`import` = "option"',
-                        array(
-                            $column => new Expr('GROUP_CONCAT(`c`.`entity_id` SEPARATOR ",")')
+                            $column => new Expr('GROUP_CONCAT(`c1`.`entity_id` SEPARATOR ",")')
                         )
                     )
                     ->group('p.sku');
@@ -632,6 +645,10 @@ class Import extends Factory
                     ->where('_children IS NOT NULL')
             );
 
+            $stepSize = 500;
+            $valuesLabels = [];
+            $valuesRelations = [];
+            $valuesSuperLink = [];
             while (($row = $query->fetch())) {
                 $attributes = explode(',', $row['_axis']);
 
@@ -673,14 +690,11 @@ class Import extends Factory
                     );
 
                     foreach ($stores as $storeId => $affected) {
-                        $values = array(
+                        $valuesLabels[] = array(
                             'product_super_attribute_id' => $superAttributeId,
                             'store_id' => $storeId,
                             'use_default' => 0,
                             'value' => ''
-                        );
-                        $connection->insertOnDuplicate(
-                            $connection->getTableName('catalog_product_super_attribute_label'), $values, array()
                         );
                     }
 
@@ -702,25 +716,63 @@ class Import extends Factory
 
                         if ($childId) {
                             /* catalog_product_relation */
-                            $values = array(
+                            $valuesRelations[] = array(
                                 'parent_id' => $row['_entity_id'],
                                 'child_id' => $childId,
                             );
-                            $connection->insertOnDuplicate(
-                                $connection->getTableName('catalog_product_relation'), $values, array()
-                            );
 
                             /* catalog_product_super_link */
-                            $values = array(
+                            $valuesSuperLink[] = array(
                                 'product_id' => $childId,
                                 'parent_id' => $row['_entity_id'],
                             );
-                            $connection->insertOnDuplicate(
-                                $connection->getTableName('catalog_product_super_link'), $values, array()
-                            );
                         }
                     }
+
+
+                    if (count($valuesSuperLink)  > $stepSize) {
+                        $connection->insertOnDuplicate(
+                            $connection->getTableName('catalog_product_super_attribute_label'),
+                            $valuesLabels,
+                            array()
+                        );
+
+                        $connection->insertOnDuplicate(
+                            $connection->getTableName('catalog_product_relation'),
+                            $valuesRelations,
+                            array()
+                        );
+                        $connection->insertOnDuplicate(
+                            $connection->getTableName('catalog_product_super_link'),
+                            $valuesSuperLink,
+                            array()
+                        );
+
+
+                        $valuesLabels = [];
+                        $valuesRelations = [];
+                        $valuesSuperLink = [];
+                    }
                 }
+            }
+
+            if (count($valuesSuperLink)  > 0) {
+                $connection->insertOnDuplicate(
+                    $connection->getTableName('catalog_product_super_attribute_label'),
+                    $valuesLabels,
+                    array()
+                );
+
+                $connection->insertOnDuplicate(
+                    $connection->getTableName('catalog_product_relation'),
+                    $valuesRelations,
+                    array()
+                );
+                $connection->insertOnDuplicate(
+                    $connection->getTableName('catalog_product_super_link'),
+                    $valuesSuperLink,
+                    array()
+                );
             }
         }
     }
