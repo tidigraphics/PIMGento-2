@@ -58,7 +58,10 @@ class PimgentoImportCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->_appState->setAreaCode(Area::AREA_ADMINHTML);
+        if (!$this->_appState->getAreaCode()) {
+	        $this->_appState->setAreaCode(Area::AREA_ADMINHTML);
+        }
+
         $code = $input->getOption(self::IMPORT_CODE);
         $file = $input->getOption(self::IMPORT_FILE);
 
