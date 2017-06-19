@@ -174,7 +174,7 @@ class UrlRewrite extends AbstractHelper
         $select = $connection->select()
             ->from(
                 ['t' => $tmpUrlRewriteTable],
-                ['entity_id', 'url_rewrite_id']
+                ['entity_id', 'url_rewrite_id', 'entity_type']
             )
             ->where('`request_path` <> `old_request_path` AND `url_rewrite_id` IS NOT NULL AND store_id =' . $storeId);
         $urls = $connection->fetchAll($select);
@@ -182,16 +182,32 @@ class UrlRewrite extends AbstractHelper
         $entityIdsToDelete = [];
         $urlIdsToKeep = [];
         foreach ($urls as $url) {
-            $entityIdsToDelete[] = (int) $url['entity_id'];
+            // Marking type of url rewrites entity types to delete
+            $entityIdsToDelete[$url['entity_type']][] = (int) $url['entity_id'];
             $urlIdsToKeep[]      = (int) $url['url_rewrite_id'];
         }
 
         if (count($entityIdsToDelete)) {
 
-            $connection->delete(
-                $urlRewriteTable,
-                'entity_id IN ('.implode(',',$entityIdsToDelete).') AND url_rewrite_id NOT IN ('.implode(',',$entityIdsToDelete).') AND store_id = '.$storeId
-            );
+            foreach ($entityIdsToDelete as $entity_type => $subEntityIdsToDelete) {
+                $connection->delete(
+                    $urlRewriteTable,
+                    'entity_id IN (' . implode(',', $subEntityIdsToDelete) . ')
+                     AND entity_type = "' . $entity_type . '"
+                    AND url_rewrite_id NOT IN (' . implode(',', $subEntityIdsToDelete) . ')
+                    AND store_id = ' . $storeId
+                );
+
+                // Delete urls associated to the products in that category
+                if ($entity_type == 'category') {
+                    foreach ($subEntityIdsToDelete as $categEntity) {
+                        $connection->delete(
+                            $urlRewriteTable,
+                            'target_path like  ("%category/' . $categEntity . '") AND store_id = ' . $storeId
+                        );
+                    }
+                }
+            }
         }
     }
 
