@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [100.2.9] - 2017-06-22
+
+  * add: New configuration for not erase category url key on update
+
 ## [100.2.8] - 2017-06-06
 
   * add: channel configuration for default values
