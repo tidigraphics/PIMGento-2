@@ -587,7 +587,7 @@ class Import extends Factory
             $columnPrefix = reset($columnPrefix);
 
             foreach ($stores as $suffix => $affected) {
-                if (preg_match('/' . $suffix . '$/', $column)) {
+                if (preg_match('/^' . $columnPrefix . '-' . $suffix . '$/', $column)) {
                     foreach ($affected as $store) {
                         if (!isset($values[$store['store_id']])) {
                             $values[$store['store_id']] = array();
