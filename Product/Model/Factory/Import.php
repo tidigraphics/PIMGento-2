@@ -946,7 +946,12 @@ class Import extends Factory
                         1
                     );
 
-                    $this->_urlRewriteHelper->rewriteUrls($this->getCode(), $store['store_id'], $column);
+                    $this->_urlRewriteHelper->rewriteUrls(
+                        $this->getCode(),
+                        $store['store_id'],
+                        $column,
+                        $this->_scopeConfig->getValue('catalog/seo/product_url_suffix')
+                    );
                 }
             }
         }

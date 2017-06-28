@@ -77,21 +77,20 @@ class UrlRewrite extends AbstractHelper
     /**
      * Perform url rewriting
      *
-     * @param string  $code
-     * @param int     $storeId
-     * @param string  $column
+     * @param string $code
+     * @param int    $storeId
+     * @param string $column
+     * @param string $urlSuffix
      *
      * @return void
      */
-    public function rewriteUrls($code, $storeId, $column)
+    public function rewriteUrls($code, $storeId, $column, $urlSuffix)
     {
         $connection         = $this->_entities->getResource()->getConnection();
         $tmpTable           = $this->_entities->getTableName($code);
         $tmpUrlRewriteTable = $connection->getTableName('tmp_pimgento_rewrite');
         $urlRewriteTable    = $connection->getTableName('url_rewrite');
         $targetPathExpr     = new Expr('CONCAT("catalog/' . $code . '/view/id/", `_entity_id`)');
-
-        $urlSuffix = $this->scopeConfig->getValue('catalog/seo/category_url_suffix');
 
         // Fill temporary url table
         $values = [

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [100.2.10] - 2017-06-28
+
+  * fix: area code in CLI
+  * fix: data overwritten by last language
+  * fix: url rewrite suffix for product and category
+
 ## [100.2.9] - 2017-06-22
 
   * add: New configuration for not erase category url key on update

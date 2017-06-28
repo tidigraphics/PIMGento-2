@@ -366,7 +366,12 @@ class Import extends Factory
                         continue;
                     }
 
-                    $this->_urlRewriteHelper->rewriteUrls($this->getCode(), $store['store_id'], $column);
+                    $this->_urlRewriteHelper->rewriteUrls(
+                        $this->getCode(),
+                        $store['store_id'],
+                        $column,
+                        $this->_scopeConfig->getValue('catalog/seo/category_url_suffix')
+                    );
                 }
             }
 
