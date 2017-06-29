@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [100.2.11] - 2017-06-29
+
+  * fix: Generate image cache
+  * fix: localized, multiselect attribute import
+
 ## [100.2.10] - 2017-06-28
 
   * fix: area code in CLI
