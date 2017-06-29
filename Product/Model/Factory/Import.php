@@ -432,7 +432,7 @@ class Import extends Factory
                         array('c' => $connection->getTableName('pimgento_entities')),
                         array('code' => 'SUBSTRING(`c`.`code`,' . $prefixL . ')', 'entity_id' => 'c.entity_id')
                     )
-                    ->where("c.code like '".$column."_%' ")
+                    ->where("c.code like '".$columnPrefix."_%' ")
                     ->where("c.import = ?", 'option');
 
                 // if no option no need to continue process
@@ -440,8 +440,8 @@ class Import extends Factory
                     continue;
                 }
                 //in case of multiselect
-                $conditionJoin = "IF ( locate(',', ".$column.") > 0 , ". "`p`.`".$column."` like ".
-                    new Expr("CONCAT('%', c1.code, '%')") .", p.".$column." = c1.code )";
+                $conditionJoin = "IF ( locate(',', `".$column."`) > 0 , ". "`p`.`".$column."` like ".
+                    new Expr("CONCAT('%', `c1`.`code`, '%')") .", `p`.`".$column."` = `c1`.`code` )";
 
                 $select = $connection->select()
                     ->from(
