@@ -388,9 +388,6 @@ class Entities extends AbstractDb
                                 'value'          => $value
                             )
                         );
-                    if ($connection->tableColumnExists($tableName, $value)) {
-                        $select->where('TRIM(`' . $value . '`) <> ?', new Expr('""'));
-                    }
 
                     $insert = $connection->insertFromSelect(
                         $select,
