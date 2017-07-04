@@ -385,7 +385,7 @@ class Entities extends AbstractDb
                                 'attribute_id'   => new Expr($attribute['attribute_id']),
                                 'store_id'       => new Expr($storeId),
                                 $identifier      => '_entity_id',
-                                'value'          => $value
+                                'value'          => new Expr('IF(`' . $value . '` <> "", `' . $value . '`, NULL)'),
                             )
                         );
 
