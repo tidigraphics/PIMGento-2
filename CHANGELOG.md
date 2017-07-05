@@ -2,8 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [100.2.13] - 2017-07-05
+## [100.2.14] - 2017-07-05
 
+  * fix: event names
   * fix: static values for entity
   * fix: clean System Urls Before Insertion
   * fix: category URL key increment on multi-store
