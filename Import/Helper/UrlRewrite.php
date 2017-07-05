@@ -162,6 +162,7 @@ class UrlRewrite extends AbstractHelper
     /**
      * URL rewrite cleaning
      *
+     * @param int $storeId
      * @return void
      */
     protected function _cleanSystemUrlsBeforeInsertion($storeId)
@@ -182,27 +183,26 @@ class UrlRewrite extends AbstractHelper
         $urlIdsToKeep = [];
         foreach ($urls as $url) {
             // Marking type of url rewrites entity types to delete
-            $entityIdsToDelete[$url['entity_type']][] = (int) $url['entity_id'];
-            $urlIdsToKeep[]      = (int) $url['url_rewrite_id'];
+            $entityIdsToDelete[$url['entity_type']][] = (int)$url['entity_id'];
+            $urlIdsToKeep[] = (int)$url['url_rewrite_id'];
         }
 
         if (count($entityIdsToDelete)) {
-
-            foreach ($entityIdsToDelete as $entity_type => $subEntityIdsToDelete) {
+            foreach ($entityIdsToDelete as $entityType => $subEntityIdsToDelete) {
                 $connection->delete(
                     $urlRewriteTable,
                     'entity_id IN (' . implode(',', $subEntityIdsToDelete) . ')
-                     AND entity_type = "' . $entity_type . '"
-                    AND url_rewrite_id NOT IN (' . implode(',', $subEntityIdsToDelete) . ')
-                    AND store_id = ' . $storeId
+                     AND entity_type = "' . $entityType . '"
+                     AND url_rewrite_id NOT IN (' . implode(',', $subEntityIdsToDelete) . ')
+                     AND store_id = ' . $storeId
                 );
 
                 // Delete urls associated to the products in that category
-                if ($entity_type == 'category') {
-                    foreach ($subEntityIdsToDelete as $categEntity) {
+                if ($entityType == 'category') {
+                    foreach ($subEntityIdsToDelete as $catEntity) {
                         $connection->delete(
                             $urlRewriteTable,
-                            'target_path like  ("%category/' . $categEntity . '") AND store_id = ' . $storeId
+                            'target_path LIKE ("%category/' . $catEntity . '") AND store_id = ' . $storeId
                         );
                     }
                 }

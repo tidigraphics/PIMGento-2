@@ -378,6 +378,10 @@ class Entities extends AbstractDb
 
                     $identifier = $this->getColumnIdentifier($entityTable . '_' . $backendType);
 
+                    if ($connection->tableColumnExists($tableName, $value)) {
+                        $value = new Expr('IF(`' . $value . '` <> "", `' . $value . '`, NULL)');
+                    }
+
                     $select = $connection->select()
                         ->from(
                             $tableName,
@@ -385,7 +389,7 @@ class Entities extends AbstractDb
                                 'attribute_id'   => new Expr($attribute['attribute_id']),
                                 'store_id'       => new Expr($storeId),
                                 $identifier      => '_entity_id',
-                                'value'          => new Expr('IF(`' . $value . '` <> "", `' . $value . '`, NULL)'),
+                                'value'          => $value,
                             )
                         );
 

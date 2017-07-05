@@ -2,8 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## Not yet released
+## [100.2.13] - 2017-07-05
 
+  * fix: static values for entity
+  * fix: clean System Urls Before Insertion
   * fix: category URL key increment on multi-store
 
 ## [100.2.12] - 2017-07-04
