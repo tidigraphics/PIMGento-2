@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Not yet released
+
+  * fix: category URL key increment on multi-store
+
 ## [100.2.12] - 2017-07-04
 
   * fix: overwriting of existing category product positions when importing products

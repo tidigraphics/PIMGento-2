@@ -116,9 +116,10 @@ class Import extends Factory
 
         $stores = $this->_helperConfig->getStores('lang');
 
-        $keys = [];
-
         foreach ($stores as $local => $affected) {
+
+            $keys = [];
+
             if ($connection->tableColumnExists($tmpTable, 'label-' . $local)) {
 
                 $connection->addColumn($tmpTable, 'url_key-' . $local, 'VARCHAR(255) NOT NULL DEFAULT ""');
