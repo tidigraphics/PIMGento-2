@@ -497,12 +497,12 @@ class Import extends Factory
             'updated_at'       => new Expr('now()'),
         );
 
+        $columnIdentifier = $this->_entities->getColumnIdentifier($table);
+
         $table = $connection->getTableName('catalog_product_entity');
 
-        if ($this->_entities->getColumnIdentifier($table) == 'row_id') {
+        if ($columnIdentifier == 'row_id') {
             $values['row_id'] = '_entity_id';
-            $values['created_in'] = new Expr(1);
-            $values['updated_in'] = new Expr(VersionManager::MAX_VERSION);
         }
 
         $parents = $connection->select()->from($tmpTable, $values);
@@ -516,6 +516,14 @@ class Import extends Factory
             'created_at' => new Expr('now()')
         );
         $connection->update($table, $values, 'created_at IS NULL');
+
+        if ($columnIdentifier == 'row_id') {
+            $values = [
+                'created_in' => new Expr(1),
+                'updated_in' => new Expr(VersionManager::MAX_VERSION),
+            ];
+            $connection->update($table, $values, 'created_in = 0 AND updated_in = 0');
+        }
     }
 
     /**
