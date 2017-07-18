@@ -399,7 +399,7 @@ class Entities extends AbstractDb
                         );
 
                     if ($columnExists) {
-                        $select->where($columnName . ' <> ?', self::IGNORE_VALUE);
+                        $select->where('`' . $columnName . '` <> ?', self::IGNORE_VALUE);
                     }
 
                     $insert = $connection->insertFromSelect(
