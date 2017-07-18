@@ -127,7 +127,9 @@ class Import extends Factory
                 $select = $connection->select()
                     ->from($tmpTable, ['entity_id' => '_entity_id', 'name' => 'label-' . $local]);
 
-                if (!$this->_scopeConfig->getValue('pimgento/category/update_url_key')) {
+                $updateUrlKeyConfig = $this->_scopeConfig->getValue('pimgento/category/update_url_key');
+
+                if (!$updateUrlKeyConfig) {
                     $select->where('_is_new = ?', 1);
                 }
 
@@ -146,6 +148,14 @@ class Import extends Factory
 
                     $connection->update(
                         $tmpTable, ['url_key-' . $local => $finalKey], ['_entity_id = ?' => $row['entity_id']]
+                    );
+                }
+
+                if (!$updateUrlKeyConfig) {
+                    $connection->update(
+                        $tmpTable,
+                        ['url_key-' . $local => \Pimgento\Entities\Model\ResourceModel\Entities::IGNORE_VALUE],
+                        ['_is_new = ?' => 0]
                     );
                 }
             }

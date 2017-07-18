@@ -11,6 +11,8 @@ use \Zend_Db_Expr as Expr;
 class Entities extends AbstractDb
 {
 
+    const IGNORE_VALUE = '!ignore!';
+
     /**
      * @var \Magento\Framework\Stdlib\DateTime\DateTime
      */
@@ -378,7 +380,10 @@ class Entities extends AbstractDb
 
                     $identifier = $this->getColumnIdentifier($entityTable . '_' . $backendType);
 
-                    if ($connection->tableColumnExists($tableName, $value)) {
+                    $columnName = $value;
+                    $columnExists = $connection->tableColumnExists($tableName, $value);
+
+                    if ($columnExists) {
                         $value = new Expr('IF(`' . $value . '` <> "", `' . $value . '`, NULL)');
                     }
 
@@ -392,6 +397,10 @@ class Entities extends AbstractDb
                                 'value'          => $value,
                             )
                         );
+
+                    if ($columnExists) {
+                        $select->where($columnName . ' <> ?', self::IGNORE_VALUE);
+                    }
 
                     $insert = $connection->insertFromSelect(
                         $select,
