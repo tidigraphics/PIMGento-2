@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Not yet released
+## [100.2.15] - 2017-07-18
 
   * fix: incompatibility with EE staging content
   * fix: url_key erased when category url key update is set to NO
