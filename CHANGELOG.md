@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [100.2.16] - 2017-07-20
+
+  * fix: URL rewrite with ignored URL key
+
 ## [100.2.15] - 2017-07-18
 
   * fix: incompatibility with EE staging content

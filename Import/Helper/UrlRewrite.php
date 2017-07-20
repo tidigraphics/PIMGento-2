@@ -117,7 +117,8 @@ class UrlRewrite extends AbstractHelper
                 AND u.store_id = ' . $storeId,
                 array()
             )
-            ->where('`t`.`' . $column . '` <> ""');
+            ->where('`t`.`' . $column . '` <> ""')
+            ->where('`t`.`' . $column . '` NOT LIKE "%' . \Pimgento\Entities\Model\ResourceModel\Entities::IGNORE_VALUE . '%"');
 
         $connection->query(
             $query = $connection->insertFromSelect(
