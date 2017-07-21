@@ -497,9 +497,9 @@ class Import extends Factory
             'updated_at'       => new Expr('now()'),
         );
 
-        $columnIdentifier = $this->_entities->getColumnIdentifier($table);
-
         $table = $connection->getTableName('catalog_product_entity');
+
+        $columnIdentifier = $this->_entities->getColumnIdentifier($table);
 
         if ($columnIdentifier == 'row_id') {
             $values['row_id'] = '_entity_id';

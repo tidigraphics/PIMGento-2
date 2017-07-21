@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [100.2.17] - 2017-07-21
+
+  * fix: notice on table variable
+
 ## [100.2.16] - 2017-07-20
 
   * fix: URL rewrite with ignored URL key
