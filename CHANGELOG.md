@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [100.2.18] - 2017-07-31
+
+  * fix: import on table with prefix
+  * fix: table engine with big data
+
 ## [100.2.17] - 2017-07-21
 
   * fix: notice on table variable

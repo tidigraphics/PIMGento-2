@@ -152,6 +152,8 @@ class Entities extends AbstractDb
             'Is New'
         );
 
+        $table->setOption('type', 'MYISAM');
+
         $connection->createTable($table);
 
         return $this;
