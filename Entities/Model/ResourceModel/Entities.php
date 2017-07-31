@@ -292,8 +292,8 @@ class Entities extends AbstractDb
 
         $connection->delete($tableName, array($pimKey . ' = ?' => ''));
 
-        $pimgentoTable = $connection->getTableName('pimgento_entities');
-        $entityTable   = $connection->getTableName($entityTable);
+        $pimgentoTable = $this->getTable('pimgento_entities');
+        $entityTable   = $this->getTable($entityTable);
 
         if ($entityKey == 'entity_id') {
             $entityKey = $this->getColumnIdentifier($entityTable);
@@ -404,7 +404,7 @@ class Entities extends AbstractDb
 
                     $insert = $connection->insertFromSelect(
                         $select,
-                        $connection->getTableName($entityTable . '_' . $backendType),
+                        $this->getTable($entityTable . '_' . $backendType),
                         array('attribute_id', 'store_id', $identifier, 'value'),
                         $mode
                     );
@@ -418,7 +418,7 @@ class Entities extends AbstractDb
                             'value = ?' => '0000-00-00 00:00:00'
                         );
                         $connection->update(
-                            $connection->getTableName($entityTable . '_' . $backendType), $values, $where
+                            $this->getTable($entityTable . '_' . $backendType), $values, $where
                         );
                     }
                 }
@@ -463,7 +463,7 @@ class Entities extends AbstractDb
 
         $attribute = $connection->fetchRow(
             $connection->select()
-                ->from($connection->getTableName('eav_attribute'), array('attribute_id', 'backend_type'))
+                ->from($this->getTable('eav_attribute'), array('attribute_id', 'backend_type'))
                 ->where('entity_type_id = ?', $entityTypeId)
                 ->where('attribute_code = ?', $code)
                 ->limit(1)
