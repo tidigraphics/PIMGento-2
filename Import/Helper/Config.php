@@ -195,7 +195,7 @@ class Config extends AbstractHelper
     {
         return $this->scopeConfig->getValue(
             Data::XML_PATH_DEFAULT_LOCALE,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_STORE
         );
     }
 }
