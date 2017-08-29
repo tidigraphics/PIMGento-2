@@ -70,7 +70,8 @@ class Import extends Factory
             $this->setStatus(false);
             $this->setMessage($this->getFileNotFoundErrorMessage());
         } else {
-            $this->_entities->createTmpTableFromFile($file, $this->getCode(), array('code', 'label'));
+            $label = 'label-' . $this->_helperConfig->getDefaultLocale();
+            $this->_entities->createTmpTableFromFile($file, $this->getCode(), array('code', $label));
         }
     }
 
@@ -104,11 +105,12 @@ class Import extends Factory
         $resource = $this->_entities->getResource();
         $connection = $resource->getConnection();
         $tmpTable = $this->_entities->getTableName($this->getCode());
+        $label = 'label-' . $this->_helperConfig->getDefaultLocale();
 
         $values = array(
             'attribute_set_id'   => '_entity_id',
             'entity_type_id'     => new Expr(4),
-            'attribute_set_name' => new Expr('CONCAT("Pim", " ", `label`)'),
+            'attribute_set_name' => new Expr('CONCAT("Pim", " ", `' . $label . '`)'),
             'sort_order'         => new Expr(1),
         );
 
