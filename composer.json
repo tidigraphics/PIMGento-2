@@ -2,15 +2,10 @@
   "name": "tidigraphics/module-pimgento",
   "description": "Module Pimgento for Magento 2",
   "require": {
-    "php": "^5.5|^7.0",
-    "magento/framework": "*",
-    "magento/module-backend": "*",
-    "magento/module-catalog": "*",
-    "magento/module-eav": "*",
-    "magento/module-store": "*"
+    "php": "^5.5|^7.0"
   },
   "type": "magento2-module",
-  "version": "100.2.20",
+  "version": "100.2.21",
   "license": [
     "OSL-3.0",
     "AFL-3.0"
